@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import './App.css';
 
 import SpotifyWebApi from 'spotify-web-api-js';
@@ -42,6 +43,14 @@ class App extends Component {
       })
   }
 
+  logOut(){
+    this.setState({loggedIn : false}, () => {
+      this.props.history.push("/");
+    })
+    
+
+  }
+
   generatePlaylist(){
     var seed = { limit: 10, min_energy: 0.4, seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], min_popularity: 50 };
     spotifyApi.getRecommendations(seed).then((response) => {
@@ -52,7 +61,9 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        { !this.state.loggedIn &&
         <a href='http://localhost:8888' > Login to Spotify </a>
+        }
         <div>
           Now Playing: { this.state.nowPlaying.name }
         </div>
@@ -70,9 +81,15 @@ class App extends Component {
             Generate a playlist
           </button>
         }
+
+        { this.state.loggedIn &&
+          <button onClick={() => this.logOut()}>
+            Log out
+          </button>
+        }
       </div>
     );
   }
 }
 
-export default App;
+export default withRouter(App);
