@@ -9,14 +9,22 @@ class App extends Component {
   constructor(){
     super();
     const params = this.getHashParams();
+    console.log(params);
     const token = params.access_token;
+    let user_id = {id : ''};
+    //let user_id = '';
     if (token) {
       spotifyApi.setAccessToken(token);
     }
+  
+    spotifyApi.getMe().then((result => { user_id.id = result.id;}))
+    console.log(user_id);
     this.state = {
       loggedIn: token ? true : false,
-      nowPlaying: { name: 'Not Checked', albumArt: '' }
+      nowPlaying: { name: 'Not Checked', albumArt: '' },
+      id: user_id
     }
+    console.log(this.state);
   }
   getHashParams() {
     var hashParams = {};
@@ -27,6 +35,7 @@ class App extends Component {
        hashParams[e[1]] = decodeURIComponent(e[2]);
        e = r.exec(q);
     }
+    //console.log(hashParams);
     return hashParams;
   }
 
@@ -52,10 +61,20 @@ class App extends Component {
   }
 
   generatePlaylist(){
-    var seed = { limit: 10, min_energy: 0.4, seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], min_popularity: 50 };
-    spotifyApi.getRecommendations(seed).then((response) => {
+    //let id = spotifyApi.getMe().then((result) =>{return result.id});
+    let seed = { limit: 10, min_energy: 0.4, seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], min_popularity: 50 };
+
+     spotifyApi.getRecommendations(seed).then((response) => {
       console.log(response)
-    })
+
+      let options = {
+        "name" : "Moodlist generated playlist",
+        "public" : false        
+      }
+
+      spotifyApi.createPlaylist(this.state.id.id, options );
+    }).then(() => {console.log("Playlist created")})
+    .catch((error) => {console.log(error)})
   }
 
   render() {
