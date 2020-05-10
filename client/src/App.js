@@ -65,16 +65,30 @@ class App extends Component {
     let seed = { limit: 10, min_energy: 0.4, seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'], min_popularity: 50 };
 
      spotifyApi.getRecommendations(seed).then((response) => {
-      console.log(response)
+       console.log(response);
+      let tracks = [];
+      response.tracks.forEach(track => {
+        tracks.push(track.uri);
+      })
+      console.log(tracks)
+
+
 
       let options = {
         "name" : "Moodlist generated playlist",
-        "public" : false        
+        "public" : false   
       }
 
-      spotifyApi.createPlaylist(this.state.id.id, options );
-    }).then(() => {console.log("Playlist created")})
-    .catch((error) => {console.log(error)})
+      spotifyApi.createPlaylist(this.state.id.id, options ).then((response) => {
+        console.log("Playlist created")
+        console.log(response)
+        spotifyApi.addTracksToPlaylist(this.state.id.id, response.id, tracks)
+        .then(response => {
+          console.log(response);
+        });
+      });
+    })
+    .catch((error) => {console.log(error)});
   }
 
   render() {
