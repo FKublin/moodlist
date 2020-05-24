@@ -7,6 +7,7 @@ import SpotifyWebApi from 'spotify-web-api-js';
 const spotifyApi = new SpotifyWebApi();
 
 class App extends Component {
+
   constructor(){
     super();
     const params = this.getHashParams();
@@ -28,6 +29,7 @@ class App extends Component {
     }
     console.log(this.state);
   }
+
   getHashParams() {
     var hashParams = {};
     var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -64,7 +66,8 @@ class App extends Component {
 
   generatePlaylist(){
     //let id = spotifyApi.getMe().then((result) =>{return result.id});
-    let seed = { limit: 10, min_energy: 0.4, seed_genres: ["electronic", "drum-and-bass", "techno"], min_popularity: 50 };
+    let seed = { limit: 10, acousticness : 0.0, danceability : 1.0, energy: 1.0, instrumentalness: 0, liveness : 0.0, loudness : -60 ,
+       seed_genres: ["electronic", "drum-and-bass", "techno"], popularity: 50, speechiness : 0.5, min_tempo : 150, valence : 0.0 };
 
      spotifyApi.getRecommendations(seed).then((response) => {
        console.log(response);
@@ -99,19 +102,11 @@ class App extends Component {
         { !this.state.loggedIn &&
         <a href='http://localhost:8888' > Login to Spotify </a>
         }
-        <div>
-          Now Playing: { this.state.nowPlaying.name }
-        </div>
+        
 
-        <div>
-          <img src={this.state.nowPlaying.albumArt} style={{ height: 150 }} alt="Placeholder"/>
-        </div>
         { this.state.loggedIn &&
         <div>
-          <button onClick={() => this.getNowPlaying()}>
-            Check Now Playing
-          </button>
-        
+
           <button onClick={() => this.generatePlaylist()}>
             Generate a playlist
           </button>
@@ -119,6 +114,7 @@ class App extends Component {
           <button onClick={() => this.logOut()}>
             Log out
           </button>
+          
           <Playlist playlist_uri={this.state.playlist_uri} />
           </div>
         }

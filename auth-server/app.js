@@ -9,6 +9,8 @@
 
 var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
+var mongoose = require('mongoose');
+var bodyParser = require('body-parser');
 
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
@@ -16,6 +18,8 @@ var cookieParser = require('cookie-parser');
 var client_id = 'bfcd08942d1f444bb6dd15d032957963'; // Your client id
 var client_secret = '86e3aa3b9b7b4cebabce8230d3529c15'; // Your secret
 var redirect_uri = 'http://localhost:8888/callback/'; // Your redirect uri
+
+var routes = require('./controllers/routes');
 
 /**
  * Generates a random string containing numbers and letters
@@ -36,8 +40,21 @@ var stateKey = 'spotify_auth_state';
 
 var app = express();
 
+mongoose.connect('mongodb://localhost:27017/moodlist');
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('Connected to database!')
+});
+
 app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
+
+app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(routes);
 
 app.get('/login', function(req, res) {
 
