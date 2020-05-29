@@ -11,6 +11,7 @@ var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
@@ -51,6 +52,8 @@ app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
 
 app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: true}))
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 

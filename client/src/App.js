@@ -66,8 +66,9 @@ class App extends Component {
 
   generatePlaylist(){
     //let id = spotifyApi.getMe().then((result) =>{return result.id});
-    let seed = { limit: 10, acousticness : 0.0, danceability : 1.0, energy: 1.0, instrumentalness: 0, liveness : 0.0, loudness : -60 ,
-       seed_genres: ["electronic", "drum-and-bass", "techno"], popularity: 50, speechiness : 0.5, min_tempo : 150, valence : 0.0 };
+    let seed = { limit: 10, seed_genres: ["electronic", "drum-and-bass", "techno"], acousticness : 0.0, danceability : 1.0,
+        energy: 1.0, instrumentalness: 0, liveness : 0.0, loudness : -60 ,
+        popularity: 50, speechiness : 0.5, tempo : 150, valence : 0.0 };
 
      spotifyApi.getRecommendations(seed).then((response) => {
        console.log(response);
@@ -88,12 +89,43 @@ class App extends Component {
         var uri = response.uri;
         spotifyApi.addTracksToPlaylist(this.state.id.id, response.id, tracks)
         .then(response => {
+
           console.log(response);
-          this.setState({ playlist_uri: uri})
+
+          fetch('http://localhost:8888/api/details', {
+            method: 'POST',
+            //mode: 'cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              user_id : this.state.id.id,
+              genres : seed.seed_genres,
+              acousticness : seed.acousticness, 
+              danceability : seed.danceability,
+              energy: seed.energy,
+              instrumentalness: seed.instrumentalness,
+              liveness : seed.liveness, 
+              loudness : seed.liveness ,
+              popularity: seed.popularity,
+              speechiness : seed.speechiness, 
+              tempo : seed.tempo, 
+              valence : seed.valence
+            })
+
+          }).then(response => response.json())
+            .then(data => {
+              console.log(data)
+              this.setState({ playlist_uri: uri})
+            })
+            
+          })
+
+
         });
-      });
-    })
-    .catch((error) => {console.log(error)});
+      }).catch((error) => {console.log(error)});
+    
+    
   }
 
   render() {

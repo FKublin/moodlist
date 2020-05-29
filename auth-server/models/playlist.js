@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const PlaylistSchema = new Schema({
+const PlaylistSchema = new Schema ({
     user_id : {
         type: String ,
         required : true
     },
+    genres : [{
+        type : String,
+        required : true
+    }],
     acousticness : {
         type: Number,
         required : true
@@ -46,9 +50,7 @@ const PlaylistSchema = new Schema({
         type: Number,
         required : true
     }
-
 })
 
-var Playlist = mongoose.model('Playlist', PlaylistSchema)
-
+var Playlist = mongoose.model('Playlist', PlaylistSchema);
 module.exports = Playlist;
